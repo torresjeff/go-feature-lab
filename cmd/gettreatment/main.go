@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/torresjeff/go-feature-lab/pkg/featurelab"
+	"github.com/torresjeff/go-feature-lab/featurelab"
 	"log"
 )
 

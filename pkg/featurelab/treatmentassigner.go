@@ -3,7 +3,6 @@ package featurelab
 import (
 	"crypto/sha256"
 	"encoding/binary"
-	"errors"
 	"fmt"
 	"log"
 )
@@ -15,14 +14,14 @@ func NewTreatmentAssigner() TreatmentAssigner {
 	return TreatmentAssigner{}
 }
 
-func (ta *TreatmentAssigner) GetTreatment(feature Feature, key string) (string, error) {
-	hashInput := feature.Name() + key
+func (ta *TreatmentAssigner) GetTreatment(feature Feature, criteria string) (string, error) {
+	hashInput := feature.Name() + criteria
 
 	hashBytes := sha256.Sum256([]byte(hashInput))
 	hash := binary.LittleEndian.Uint64(hashBytes[:])
 
 	score := ta.calculateTreatmentAssignmentScore(feature, hash)
-	log.Println(fmt.Sprintf("Calculated score for feature %s and key %s is %d", feature.Name(), key, score))
+	log.Println(fmt.Sprintf("Calculated score for feature %s and criteria %s is: %d", feature.Name(), criteria, score))
 
 	for _, allocation := range feature.Allocations() {
 		if score < allocation.Weight() {
@@ -32,7 +31,7 @@ func (ta *TreatmentAssigner) GetTreatment(feature Feature, key string) (string, 
 		score -= allocation.Weight()
 	}
 
-	return "", errors.New(fmt.Sprintf("Unable to determine treatment for feature: %s, key: %s", feature.Name(), key))
+	return "", fmt.Errorf("unable to determine treatment for feature: %s, criteria: %s", feature.Name(), criteria)
 }
 
 func (ta *TreatmentAssigner) calculateTreatmentAssignmentScore(f Feature, hash uint64) uint32 {

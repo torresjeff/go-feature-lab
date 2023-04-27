@@ -15,7 +15,7 @@ Using a value that changes over time as your allocation criteria could have the 
 resulting in an inconsistent experience.
 
 ## How Feature Lab works
-The basic building block of Feature Lab is a `Feature`. A `Feature` consists of a name and 0 or more `FeatureAllocations`.
+The basic building block of Feature Lab is a `Feature`. A `Feature` is identified by a name and has 0 or more `FeatureAllocations`.
 Suppose we have a live-streaming website, and we're working on a new feature to show recommended channels to a user based on the content that they watch.
 Our feature name would be "Show recommendations" and we're going to define different treatments to decide the best placement of the new recommendations panel inside the webpage.
 
@@ -31,6 +31,7 @@ For example, here are the weights for our new recommendation feature:
 | T1       | 50         |
 | T2       | 20         |
 | **Total**| 100        |
+
 Note: in this table C = Control Treatment, T1 = Treatment 1, T2 = Treatment 2.
 
 The actual meaning of each treatment is given entirely by you. Here's the meaning I've assigned to each treatment:
@@ -39,7 +40,6 @@ The actual meaning of each treatment is given entirely by you. Here's the meanin
 * Treatment 2 (`T2`): recommendations are shown at the right-side of the page.
 
 According to the weights shown in the table, the probability that a user is assigned treatment `C` is 30%; `T1` is 50%; and `T2` is 20%.
-
 Note that weights need not add up to 100. The relative weight of each treatment is determined by dividing the weight of that treatment by the total weight of all treatments.
 
 **Note:** if you want to gather data to benchmark against your control treatment fairly, then the probability of a user falling in each treatment should be equal (eg. weights could be: C - 10; T1 - 10; T2 - 10).

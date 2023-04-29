@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"github.com/torresjeff/go-feature-lab/featurelab"
 	"log"
+	"time"
 )
 
 func main() {
-	featureLab := featurelab.NewCacheableFeatureLab()
+	featureLab := featurelab.NewCacheableFeatureLab(10*time.Minute, 30*time.Minute)
 
 	// Initial fetch to cache features
 	_, err := featureLab.FetchFeatures()

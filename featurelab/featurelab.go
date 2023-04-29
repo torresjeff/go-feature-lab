@@ -1,6 +1,9 @@
 package featurelab
 
-import "log"
+import (
+	"log"
+	"time"
+)
 
 type FeatureLab interface {
 	GetTreatment(feature string, criteria string) (string, error)
@@ -86,10 +89,10 @@ func (f *cacheableFeatureLab) FetchFeature(featureName string) (Feature, error) 
 	return feature, nil
 }
 
-func NewCacheableFeatureLab() FeatureLab {
+func NewCacheableFeatureLab(ttl, cleanUpInterval time.Duration) FeatureLab {
 	return &cacheableFeatureLab{
 		featureLab:        featureLab{},
 		treatmentAssigner: TreatmentAssigner{},
-		featureCache:      NewDefaultFeatureCache(),
+		featureCache:      NewDefaultFeatureCache(ttl, cleanUpInterval),
 	}
 }

@@ -3,6 +3,7 @@ package featurelab
 import (
 	"fmt"
 	"github.com/patrickmn/go-cache"
+	"time"
 )
 
 type FeatureCache interface {
@@ -19,7 +20,7 @@ func (d *defaultFeatureCache) GetFeature(name string) (Feature, error) {
 	if feature, found := d.cache.Get(name); found {
 		f, ok := feature.(Feature)
 		if !ok {
-			return nil, fmt.Errorf("expected to find a Feature in cache, but instead found %v", f)
+			panic(fmt.Sprintf("expected to find a Feature in cache, but instead found %+v", f))
 		}
 		return f, nil
 	}
@@ -28,7 +29,7 @@ func (d *defaultFeatureCache) GetFeature(name string) (Feature, error) {
 }
 
 func (d *defaultFeatureCache) PutFeature(name string, feature Feature) {
-	d.cache.Set(name, feature, DefaultConfig.cacheTTL)
+	d.cache.Set(name, feature, cache.DefaultExpiration)
 }
 
 func (d *defaultFeatureCache) PutFeatures(features []Feature) {
@@ -37,8 +38,8 @@ func (d *defaultFeatureCache) PutFeatures(features []Feature) {
 	}
 }
 
-func NewDefaultFeatureCache() FeatureCache {
+func NewDefaultFeatureCache(ttl time.Duration, cleanUpInterval time.Duration) FeatureCache {
 	return &defaultFeatureCache{
-		cache: cache.New(DefaultConfig.cacheTTL, DefaultConfig.cacheTTL),
+		cache: cache.New(ttl, cleanUpInterval),
 	}
 }

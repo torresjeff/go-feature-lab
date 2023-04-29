@@ -42,19 +42,19 @@ type FeatureAllocation interface {
 }
 
 type featureAllocation struct {
-	FeatureName      string `json:"featureName"`
+	Treatment        string `json:"treatment"`
 	AllocationWeight uint32 `json:"weight"`
 }
 
 func NewFeatureAllocation(name string, weight uint32) FeatureAllocation {
 	return &featureAllocation{
-		FeatureName:      name,
+		Treatment:        name,
 		AllocationWeight: weight,
 	}
 }
 
 func (f *featureAllocation) Name() string {
-	return f.FeatureName
+	return f.Treatment
 }
 
 func (f *featureAllocation) Weight() uint32 {

@@ -6,7 +6,7 @@ import (
 )
 
 type FeatureLab interface {
-	GetTreatment(feature string, criteria string) (string, error)
+	GetTreatment(featureName string, criteria string) (TreatmentAssignment, error)
 	FetchFeatures() ([]Feature, error)
 	FetchFeature(featureName string) (Feature, error)
 }
@@ -25,7 +25,7 @@ func New() FeatureLab {
 }
 
 // GetTreatment fetches the treatment that is assigned for a criteria in a particular feature.
-func (f *featureLab) GetTreatment(featureName string, criteria string) (string, error) {
+func (f *featureLab) GetTreatment(featureName string, criteria string) (TreatmentAssignment, error) {
 	return f.featureLabClient.GetTreatment(featureName, criteria)
 }
 
@@ -49,14 +49,14 @@ type cacheableFeatureLab struct {
 // If the feature is not in the cache, then an error is returned.
 // This method won't make calls to the backend service, it will only operate on features stored in cache.
 // To force a cache update, you must call FetchFeatures (to cache all features) or FetchFeature (for a specific feature).
-func (f *cacheableFeatureLab) GetTreatment(featureName string, criteria string) (string, error) {
+func (f *cacheableFeatureLab) GetTreatment(featureName string, criteria string) (TreatmentAssignment, error) {
 	feature, err := f.featureCache.GetFeature(featureName)
 	if err != nil {
-		return "", err
+		return TreatmentAssignment{}, err
 	}
 	log.Printf("Found feature %s in cache, calculating treatment\n", featureName)
 
-	return f.treatmentAssigner.GetTreatment(feature, criteria)
+	return f.treatmentAssigner.GetTreatmentAssignment(feature, criteria)
 }
 
 // FetchFeatures fetches all features from the Feature Lab backend service and stores them in cache, overwriting any values that already
@@ -75,7 +75,7 @@ func (f *cacheableFeatureLab) FetchFeatures() ([]Feature, error) {
 }
 
 // FetchFeature fetches the feature information of a feature from the Feature Lab backend service and stores it in cache, overwriting any value
-// that already exists in the cache with the same feature name.
+// that already exists in the cache with the same feature FeatureName.
 func (f *cacheableFeatureLab) FetchFeature(featureName string) (Feature, error) {
 	feature, err := f.featureLabClient.FetchFeature(featureName)
 	if err != nil {

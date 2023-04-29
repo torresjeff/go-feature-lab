@@ -7,29 +7,29 @@ type Feature interface {
 }
 
 type feature struct {
-	name                 string
-	treatmentAllocations []FeatureAllocation
+	FeatureName          string              `json:"featureName"`
+	TreatmentAllocations []FeatureAllocation `json:"treatmentAllocations"`
 }
 
 func NewFeature(name string, allocations []FeatureAllocation) Feature {
 	return &feature{
-		name:                 name,
-		treatmentAllocations: allocations,
+		FeatureName:          name,
+		TreatmentAllocations: allocations,
 	}
 }
 
 func (f *feature) Name() string {
-	return f.name
+	return f.FeatureName
 }
 
 func (f *feature) Allocations() []FeatureAllocation {
-	return f.treatmentAllocations
+	return f.TreatmentAllocations
 }
 
 func (f *feature) TotalAllocationsWeight() uint32 {
 	var sum uint32 = 0
 
-	for _, ta := range f.treatmentAllocations {
+	for _, ta := range f.TreatmentAllocations {
 		sum += ta.Weight()
 	}
 
@@ -42,21 +42,21 @@ type FeatureAllocation interface {
 }
 
 type featureAllocation struct {
-	name   string
-	weight uint32
+	FeatureName      string `json:"featureName"`
+	AllocationWeight uint32 `json:"weight"`
 }
 
 func NewFeatureAllocation(name string, weight uint32) FeatureAllocation {
 	return &featureAllocation{
-		name:   name,
-		weight: weight,
+		FeatureName:      name,
+		AllocationWeight: weight,
 	}
 }
 
 func (f *featureAllocation) Name() string {
-	return f.name
+	return f.FeatureName
 }
 
 func (f *featureAllocation) Weight() uint32 {
-	return f.weight
+	return f.AllocationWeight
 }

@@ -14,7 +14,11 @@ func NewTreatmentAssigner() TreatmentAssigner {
 	return TreatmentAssigner{}
 }
 
-func (ta *TreatmentAssigner) GetTreatment(feature Feature, criteria string) (string, error) {
+type TreatmentAssignment struct {
+	Treatment string `json:"treatment"`
+}
+
+func (ta *TreatmentAssigner) GetTreatmentAssignment(feature Feature, criteria string) (TreatmentAssignment, error) {
 	hashInput := feature.Name() + criteria
 
 	hashBytes := sha256.Sum256([]byte(hashInput))
@@ -25,13 +29,13 @@ func (ta *TreatmentAssigner) GetTreatment(feature Feature, criteria string) (str
 
 	for _, allocation := range feature.Allocations() {
 		if score < allocation.Weight() {
-			return allocation.Name(), nil
+			return TreatmentAssignment{allocation.Name()}, nil
 		}
 
 		score -= allocation.Weight()
 	}
 
-	return "", fmt.Errorf("unable to determine treatment for feature: %s, criteria: %s", feature.Name(), criteria)
+	return TreatmentAssignment{}, fmt.Errorf("unable to determine treatment for feature: %s, criteria: %s", feature.Name(), criteria)
 }
 
 func (ta *TreatmentAssigner) calculateTreatmentAssignmentScore(f Feature, hash uint64) uint32 {

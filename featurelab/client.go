@@ -7,16 +7,16 @@ import (
 type Client struct {
 }
 
-func (c *Client) GetTreatment(featureName string, criteria string) (string, error) {
+func (c *Client) GetTreatment(featureName string, criteria string) (TreatmentAssignment, error) {
 	// TODO: make call to FeatureLab server
 
 	feature, err := c.FetchFeature(featureName)
 	if err != nil {
-		return "", err
+		return TreatmentAssignment{}, err
 	}
 
 	assigner := NewTreatmentAssigner()
-	return assigner.GetTreatment(feature, criteria)
+	return assigner.GetTreatmentAssignment(feature, criteria)
 }
 
 func (c *Client) FetchFeature(featureName string) (Feature, error) {
@@ -24,16 +24,16 @@ func (c *Client) FetchFeature(featureName string) (Feature, error) {
 
 	if featureName == "ShowRecommendations" {
 		return &feature{
-			name: "ShowRecommendations",
-			treatmentAllocations: []FeatureAllocation{
+			FeatureName: "ShowRecommendations",
+			TreatmentAllocations: []FeatureAllocation{
 				NewFeatureAllocation("C", 10),
 				NewFeatureAllocation("T1", 10),
 				NewFeatureAllocation("T2", 10),
 			}}, nil
 	} else if featureName == "ChangeBuyButtonColor" {
 		return &feature{
-			name: "ChangeBuyButtonColor",
-			treatmentAllocations: []FeatureAllocation{
+			FeatureName: "ChangeBuyButtonColor",
+			TreatmentAllocations: []FeatureAllocation{
 				NewFeatureAllocation("C", 32),
 				NewFeatureAllocation("T1", 68),
 			}}, nil
@@ -46,15 +46,15 @@ func (c *Client) FetchFeatures() ([]Feature, error) {
 
 	return []Feature{
 		&feature{
-			name: "ShowRecommendations",
-			treatmentAllocations: []FeatureAllocation{
+			FeatureName: "ShowRecommendations",
+			TreatmentAllocations: []FeatureAllocation{
 				NewFeatureAllocation("C", 10),
 				NewFeatureAllocation("T1", 10),
 				NewFeatureAllocation("T2", 10),
 			}},
 		&feature{
-			name: "ChangeBuyButtonColor",
-			treatmentAllocations: []FeatureAllocation{
+			FeatureName: "ChangeBuyButtonColor",
+			TreatmentAllocations: []FeatureAllocation{
 				NewFeatureAllocation("C", 32),
 				NewFeatureAllocation("T1", 68),
 			}},

@@ -2,17 +2,20 @@ package featurelab
 
 type Feature interface {
 	Name() string
+	App() string
 	Allocations() []FeatureAllocation
 	TotalAllocationsWeight() uint32
 }
 
 type feature struct {
+	AppName              string              `json:"app"`
 	FeatureName          string              `json:"featureName"`
 	TreatmentAllocations []FeatureAllocation `json:"treatmentAllocations"`
 }
 
-func NewFeature(name string, allocations []FeatureAllocation) Feature {
+func NewFeature(app string, name string, allocations []FeatureAllocation) Feature {
 	return &feature{
+		AppName:              app,
 		FeatureName:          name,
 		TreatmentAllocations: allocations,
 	}
@@ -20,6 +23,10 @@ func NewFeature(name string, allocations []FeatureAllocation) Feature {
 
 func (f *feature) Name() string {
 	return f.FeatureName
+}
+
+func (f *feature) App() string {
+	return f.AppName
 }
 
 func (f *feature) Allocations() []FeatureAllocation {

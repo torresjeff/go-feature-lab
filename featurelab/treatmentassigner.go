@@ -19,13 +19,14 @@ type TreatmentAssignment struct {
 }
 
 func (ta *TreatmentAssigner) GetTreatmentAssignment(feature Feature, criteria string) (TreatmentAssignment, error) {
-	hashInput := feature.Name() + criteria
+	hashInput := feature.App() + feature.Name() + criteria
 
 	hashBytes := sha256.Sum256([]byte(hashInput))
 	hash := binary.LittleEndian.Uint64(hashBytes[:])
 
 	score := ta.calculateTreatmentAssignmentScore(feature, hash)
-	log.Println(fmt.Sprintf("Calculated score for feature %s and criteria %s is: %d", feature.Name(), criteria, score))
+	log.Println(fmt.Sprintf("Calculated score for feature %s:%s and criteria %s is: %d",
+		feature.App(), feature.Name(), criteria, score))
 
 	for _, allocation := range feature.Allocations() {
 		if score < allocation.Weight() {

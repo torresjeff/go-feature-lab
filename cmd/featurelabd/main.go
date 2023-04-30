@@ -12,11 +12,11 @@ func main() {
 	var featureLabHost string
 	flag.StringVar(&featureLabHost,
 		"featurelab-host",
-		"featurelab.com:3000",
+		"featurelab.com:3000", // requires modification of /etc/hosts file: 127.0.0.1 featurelab.com
 		"URL where Feature Lab server is located. Eg: localhost:3000")
 	flag.StringVar(&featureLabHost,
 		"f",
-		"featurelab.com:3000",
+		"featurelab.com:3000", // requires modification of /etc/hosts file: 127.0.0.1 featurelab.com
 		"URL where Feature Lab server is located. Eg: localhost:3000")
 	flag.Parse()
 
@@ -30,7 +30,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	userIds := []string{"123456", "123457", "654321", "456789", "987654", "123321", "741852", "852963", "369147", "258963"}
+	userIds := []string{"123456", "456789", "789123", "789456", "987654", "654321", "321987", "123789", "741852", "852963"}
 	featureName := "ChangeBuyButtonColor"
 
 	for _, userId := range userIds {

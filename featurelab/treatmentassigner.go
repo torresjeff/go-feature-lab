@@ -3,9 +3,12 @@ package featurelab
 import (
 	"crypto/sha256"
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"log"
 )
+
+var InvalidTreatmentAllocation = errors.New("invalid treatment allocation")
 
 type TreatmentAssigner struct {
 }
@@ -36,7 +39,9 @@ func (ta *TreatmentAssigner) GetTreatmentAssignment(feature Feature, criteria st
 		score -= allocation.Weight()
 	}
 
-	return TreatmentAssignment{}, fmt.Errorf("unable to determine treatment for feature: %s, criteria: %s", feature.Name(), criteria)
+	log.Printf("Invalid treatment allocation for feature %s:%s and criteria %s\n", feature.App(), feature.Name(), criteria)
+
+	return TreatmentAssignment{}, InvalidTreatmentAllocation
 }
 
 func (ta *TreatmentAssigner) calculateTreatmentAssignmentScore(f Feature, hash uint64) uint32 {

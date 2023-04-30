@@ -21,10 +21,10 @@ func (d *defaultFeatureCache) GetFeature(app, name string) (Feature, error) {
 	if feature, found := d.cache.Get(getCacheKey(app, name)); found {
 		f, ok := feature.(Feature)
 		if !ok {
-			panic(fmt.Sprintf("expected to find a Feature in cache, but instead found %+v", f))
+			panic(fmt.Sprintf("expected to find a Name in cache, but instead found %+v", f))
 		}
 
-		log.Printf("Found Feature %s in cache\n", getCacheKey(app, name))
+		log.Printf("Found Name %s in cache\n", getCacheKey(app, name))
 		return f, nil
 	}
 
@@ -34,12 +34,12 @@ func (d *defaultFeatureCache) GetFeature(app, name string) (Feature, error) {
 func (d *defaultFeatureCache) PutFeature(app, name string, feature Feature) {
 	d.cache.Set(getCacheKey(app, name), feature, cache.DefaultExpiration)
 
-	log.Printf("Cached Feature: %s\n", getCacheKey(app, name))
+	log.Printf("Cached Name: %s\n", getCacheKey(app, name))
 }
 
 func (d *defaultFeatureCache) PutFeatures(features []Feature) {
 	for _, f := range features {
-		d.PutFeature(f.App(), f.Name(), f)
+		d.PutFeature(f.App, f.Name, f)
 	}
 }
 

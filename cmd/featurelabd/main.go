@@ -13,11 +13,11 @@ func main() {
 	flag.StringVar(&featureLabHost,
 		"featurelab-host",
 		"featurelab.com:3000", // requires modification of /etc/hosts file: 127.0.0.1 featurelab.com
-		"URL where Feature Lab server is located. Eg: localhost:3000")
+		"URL where Name Lab server is located. Eg: localhost:3000")
 	flag.StringVar(&featureLabHost,
 		"f",
 		"featurelab.com:3000", // requires modification of /etc/hosts file: 127.0.0.1 featurelab.com
-		"URL where Feature Lab server is located. Eg: localhost:3000")
+		"URL where Name Lab server is located. Eg: localhost:3000")
 	flag.Parse()
 
 	featureLab := featurelab.NewCacheableFeatureLab(featureLabHost, 10*time.Minute, 30*time.Minute)
@@ -38,7 +38,7 @@ func main() {
 		if err != nil {
 			log.Printf(err.Error())
 		} else {
-			log.Println(fmt.Sprintf("TreatmentName for feature %s using criteria %s is: %+v", featureName, userId, treatment))
+			log.Println(fmt.Sprintf("Treatment for feature %s using criteria %s is: %+v", featureName, userId, treatment))
 		}
 
 	}

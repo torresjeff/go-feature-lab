@@ -15,15 +15,15 @@ func TestFeature(t *testing.T) {
 
 	got := NewFeature(app, name, allocations)
 
-	if got.App() != app {
-		t.Errorf("got %s, wantTreatment %s", got.App(), app)
+	if got.App != app {
+		t.Errorf("got %s, wantTreatment %s", got.App, app)
 	}
-	if got.Name() != name {
-		t.Errorf("got %s, wantTreatment %s", got.Name(), name)
+	if got.Name != name {
+		t.Errorf("got %s, wantTreatment %s", got.Name, name)
 	}
 
-	if !reflect.DeepEqual(got.Allocations(), allocations) {
-		t.Errorf("got %+v, wantTreatment %+v", got.Allocations(), allocations)
+	if !reflect.DeepEqual(got.Allocations, allocations) {
+		t.Errorf("got %+v, wantTreatment %+v", got.Allocations, allocations)
 	}
 
 	if got.TotalAllocationWeight() != 20 {
@@ -37,10 +37,10 @@ func TestFeatureAllocation(t *testing.T) {
 
 	got := NewFeatureAllocation(treatment, weight)
 
-	if got.Treatment() != treatment {
-		t.Errorf("got %s, wantTreatment %s", got.Treatment(), treatment)
+	if got.Treatment != treatment {
+		t.Errorf("got %s, wantTreatment %s", got.Treatment, treatment)
 	}
-	if got.Weight() != weight {
-		t.Errorf("got %d, wantTreatment %d", got.Weight(), weight)
+	if got.Weight != weight {
+		t.Errorf("got %d, wantTreatment %d", got.Weight, weight)
 	}
 }

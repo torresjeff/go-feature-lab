@@ -25,23 +25,23 @@ func (c *Client) FetchFeature(app string, featureName string) (Feature, error) {
 
 	if app == "FeatureLab" && featureName == "ShowRecommendations" {
 		return Feature{
-			AppName:     "FeatureLab",
-			FeatureName: "ShowRecommendations",
-			TreatmentAllocations: []FeatureAllocation{
+			App:  "FeatureLab",
+			Name: "ShowRecommendations",
+			Allocations: []FeatureAllocation{
 				NewFeatureAllocation("C", 10),
 				NewFeatureAllocation("T1", 10),
 				NewFeatureAllocation("T2", 10),
 			}}, nil
 	} else if app == "FeatureLab" && featureName == "ChangeBuyButtonColor" {
 		return Feature{
-			AppName:     "FeatureLab",
-			FeatureName: "ChangeBuyButtonColor",
-			TreatmentAllocations: []FeatureAllocation{
+			App:  "FeatureLab",
+			Name: "ChangeBuyButtonColor",
+			Allocations: []FeatureAllocation{
 				NewFeatureAllocation("C", 32),
 				NewFeatureAllocation("T1", 68),
 			}}, nil
 	}
-	return Feature{}, fmt.Errorf("Feature %s or app %s doesn't exist", featureName, app)
+	return Feature{}, fmt.Errorf("Name %s or app %s doesn't exist", featureName, app)
 }
 
 func (c *Client) FetchFeatures(app string) ([]Feature, error) {
@@ -52,17 +52,17 @@ func (c *Client) FetchFeatures(app string) ([]Feature, error) {
 
 	return []Feature{
 		Feature{
-			AppName:     "FeatureLab",
-			FeatureName: "ShowRecommendations",
-			TreatmentAllocations: []FeatureAllocation{
+			App:  "FeatureLab",
+			Name: "ShowRecommendations",
+			Allocations: []FeatureAllocation{
 				NewFeatureAllocation("C", 10),
 				NewFeatureAllocation("T1", 10),
 				NewFeatureAllocation("T2", 10),
 			}},
 		Feature{
-			AppName:     "FeatureLab",
-			FeatureName: "ChangeBuyButtonColor",
-			TreatmentAllocations: []FeatureAllocation{
+			App:  "FeatureLab",
+			Name: "ChangeBuyButtonColor",
+			Allocations: []FeatureAllocation{
 				NewFeatureAllocation("C", 32),
 				NewFeatureAllocation("T1", 68),
 			}},

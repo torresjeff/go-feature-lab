@@ -74,7 +74,7 @@ func (f *cacheableFeatureLab) FetchFeatures(app string) ([]Feature, error) {
 }
 
 // FetchFeature fetches the Feature information of a Feature from the Feature Lab backend service and stores it in cache, overwriting any value
-// that already exists in the cache with the same Feature TreatmentName.
+// that already exists in the cache with the same Feature Treatment.
 func (f *cacheableFeatureLab) FetchFeature(app string, featureName string) (Feature, error) {
 	feature, err := f.featureLabClient.FetchFeature(app, featureName)
 	if err != nil {

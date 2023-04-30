@@ -8,7 +8,9 @@ import (
 	"log"
 )
 
-var InvalidTreatmentAllocation = errors.New("invalid treatment allocation")
+var FeatureOff = TreatmentAssignment{}
+
+var ErrInvalidTreatmentAllocation = errors.New("invalid treatment allocation")
 
 type TreatmentAssigner struct {
 }
@@ -22,6 +24,10 @@ type TreatmentAssignment struct {
 }
 
 func (ta *TreatmentAssigner) GetTreatmentAssignment(feature Feature, criteria string) (TreatmentAssignment, error) {
+	if feature.Allocations() == nil || len(feature.Allocations()) == 0 {
+		return FeatureOff, nil
+	}
+
 	hashInput := feature.App() + feature.Name() + criteria
 
 	hashBytes := sha256.Sum256([]byte(hashInput))
@@ -41,7 +47,7 @@ func (ta *TreatmentAssigner) GetTreatmentAssignment(feature Feature, criteria st
 
 	log.Printf("Invalid treatment allocation for feature %s:%s and criteria %s\n", feature.App(), feature.Name(), criteria)
 
-	return TreatmentAssignment{}, InvalidTreatmentAllocation
+	return TreatmentAssignment{}, ErrInvalidTreatmentAllocation
 }
 
 func (ta *TreatmentAssigner) calculateTreatmentAssignmentScore(f Feature, hash uint64) uint32 {

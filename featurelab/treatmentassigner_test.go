@@ -17,8 +17,11 @@ func TestTreatmentAssigner_GetTreatmentAssignment(t *testing.T) {
 			NewFeatureAllocation("C", 32),
 			NewFeatureAllocation("T1", 68),
 		})
-	invalidTreatmentAllocation := NewFeature("FeatureLab",
-		"NegativeTreatments",
+	featureOff := NewFeature("FeatureLab",
+		"FeatureOff",
+		[]FeatureAllocation{})
+	invalidTreatmentFeature := NewFeature("FeatureLab",
+		"InvalidTreatments",
 		[]FeatureAllocation{
 			NewFeatureAllocation("C", 0),
 			NewFeatureAllocation("T1", 0),
@@ -35,7 +38,8 @@ func TestTreatmentAssigner_GetTreatmentAssignment(t *testing.T) {
 		{feature: showRecommendationFeature, criteria: "987654", wantTreatment: TreatmentAssignment{Treatment: "C"}, wantError: nil},
 		{feature: showRecommendationFeature, criteria: "789123", wantTreatment: TreatmentAssignment{Treatment: "T1"}, wantError: nil},
 		{feature: showRecommendationFeature, criteria: "123456", wantTreatment: TreatmentAssignment{Treatment: "T2"}, wantError: nil},
-		{feature: invalidTreatmentAllocation, criteria: "123456", wantTreatment: TreatmentAssignment{}, wantError: InvalidTreatmentAllocation},
+		{feature: featureOff, criteria: "123456", wantTreatment: TreatmentAssignment{}, wantError: nil},
+		{feature: invalidTreatmentFeature, criteria: "123456", wantTreatment: TreatmentAssignment{}, wantError: ErrInvalidTreatmentAllocation},
 	}
 
 	treatmentAssigner := NewTreatmentAssigner()

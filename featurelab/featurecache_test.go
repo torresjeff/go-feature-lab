@@ -1,6 +1,7 @@
 package featurelab
 
 import (
+	"reflect"
 	"testing"
 	"time"
 )
@@ -25,14 +26,14 @@ func TestNewDefaultFeatureCache(t *testing.T) {
 	got.PutFeature(app, showRecommendations, feature)
 
 	if f, err := got.GetFeature(app, showRecommendations); err != nil {
-		t.Errorf("got error %s, wantTreatment %+v", err, feature)
-	} else if f != feature {
-		t.Errorf("got %+v, wantTreatment %+v", f, feature)
+		t.Errorf("got error %s, want feature %+v", err, feature)
+	} else if !reflect.DeepEqual(f, feature) {
+		t.Errorf("got %+v, want %+v", f, feature)
 	}
 
 	nonExistingFeatureName := "NonExistingFeature"
 	if f, err := got.GetFeature(app, nonExistingFeatureName); err == nil {
-		t.Errorf("got %+v, wantTreatment error", f)
+		t.Errorf("got %+v, want error", f)
 	}
 
 }

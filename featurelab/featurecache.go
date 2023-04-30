@@ -24,17 +24,17 @@ func (d *defaultFeatureCache) GetFeature(app, name string) (Feature, error) {
 			panic(fmt.Sprintf("expected to find a Feature in cache, but instead found %+v", f))
 		}
 
-		log.Printf("Found feature %s in cache\n", getCacheKey(app, name))
+		log.Printf("Found Feature %s in cache\n", getCacheKey(app, name))
 		return f, nil
 	}
 
-	return nil, fmt.Errorf("feature %s doesn't exist in cache", name)
+	return Feature{}, fmt.Errorf("feature %s doesn't exist in cache", name)
 }
 
 func (d *defaultFeatureCache) PutFeature(app, name string, feature Feature) {
 	d.cache.Set(getCacheKey(app, name), feature, cache.DefaultExpiration)
 
-	log.Printf("Cached feature: %s\n", getCacheKey(app, name))
+	log.Printf("Cached Feature: %s\n", getCacheKey(app, name))
 }
 
 func (d *defaultFeatureCache) PutFeatures(features []Feature) {

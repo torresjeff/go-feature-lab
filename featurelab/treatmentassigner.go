@@ -34,18 +34,18 @@ func (ta *TreatmentAssigner) GetTreatmentAssignment(feature Feature, criteria st
 	hash := binary.LittleEndian.Uint64(hashBytes[:])
 
 	score := ta.calculateTreatmentAssignmentScore(feature, hash)
-	log.Println(fmt.Sprintf("Calculated score for feature %s:%s and criteria %s is: %d",
+	log.Println(fmt.Sprintf("Calculated score for Feature %s:%s and criteria %s is: %d",
 		feature.App(), feature.Name(), criteria, score))
 
 	for _, allocation := range feature.Allocations() {
 		if score < allocation.Weight() {
-			return TreatmentAssignment{allocation.Name()}, nil
+			return TreatmentAssignment{allocation.Treatment()}, nil
 		}
 
 		score -= allocation.Weight()
 	}
 
-	log.Printf("Invalid treatment allocation for feature %s:%s and criteria %s\n", feature.App(), feature.Name(), criteria)
+	log.Printf("Invalid treatment allocation for Feature %s:%s and criteria %s\n", feature.App(), feature.Name(), criteria)
 
 	return TreatmentAssignment{}, ErrInvalidTreatmentAllocation
 }
@@ -54,5 +54,5 @@ func (ta *TreatmentAssigner) calculateTreatmentAssignmentScore(f Feature, hash u
 	// discard higher 32 bits to get a uniformly distributed random number between 0 and 2^32 - 1
 	hashLower := hash & 0xFFFFFFFF
 
-	return uint32((hashLower * uint64(f.TotalAllocationsWeight())) / (1 << 32))
+	return uint32((hashLower * uint64(f.TotalAllocationWeight())) / (1 << 32))
 }

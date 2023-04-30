@@ -1,39 +1,32 @@
 package featurelab
 
-type Feature interface {
-	Name() string
-	App() string
-	Allocations() []FeatureAllocation
-	TotalAllocationsWeight() uint32
-}
-
-type feature struct {
+type Feature struct {
 	AppName              string              `json:"app"`
 	FeatureName          string              `json:"featureName"`
 	TreatmentAllocations []FeatureAllocation `json:"treatmentAllocations"`
 }
 
 func NewFeature(app string, name string, allocations []FeatureAllocation) Feature {
-	return &feature{
+	return Feature{
 		AppName:              app,
 		FeatureName:          name,
 		TreatmentAllocations: allocations,
 	}
 }
 
-func (f *feature) Name() string {
+func (f *Feature) Name() string {
 	return f.FeatureName
 }
 
-func (f *feature) App() string {
+func (f *Feature) App() string {
 	return f.AppName
 }
 
-func (f *feature) Allocations() []FeatureAllocation {
+func (f *Feature) Allocations() []FeatureAllocation {
 	return f.TreatmentAllocations
 }
 
-func (f *feature) TotalAllocationsWeight() uint32 {
+func (f *Feature) TotalAllocationWeight() uint32 {
 	var sum uint32 = 0
 
 	for _, ta := range f.TreatmentAllocations {
@@ -43,27 +36,22 @@ func (f *feature) TotalAllocationsWeight() uint32 {
 	return sum
 }
 
-type FeatureAllocation interface {
-	Name() string
-	Weight() uint32
-}
-
-type featureAllocation struct {
-	Treatment        string `json:"treatment"`
-	AllocationWeight uint32 `json:"weight"`
+type FeatureAllocation struct {
+	TreatmentName   string `json:"treatment"`
+	TreatmentWeight uint32 `json:"weight"`
 }
 
 func NewFeatureAllocation(name string, weight uint32) FeatureAllocation {
-	return &featureAllocation{
-		Treatment:        name,
-		AllocationWeight: weight,
+	return FeatureAllocation{
+		TreatmentName:   name,
+		TreatmentWeight: weight,
 	}
 }
 
-func (f *featureAllocation) Name() string {
-	return f.Treatment
+func (f *FeatureAllocation) Treatment() string {
+	return f.TreatmentName
 }
 
-func (f *featureAllocation) Weight() uint32 {
-	return f.AllocationWeight
+func (f *FeatureAllocation) Weight() uint32 {
+	return f.TreatmentWeight
 }

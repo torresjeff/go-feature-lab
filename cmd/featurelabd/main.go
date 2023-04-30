@@ -38,7 +38,7 @@ func main() {
 		if err != nil {
 			log.Printf(err.Error())
 		} else {
-			log.Println(fmt.Sprintf("Treatment for feature %s using criteria %s is: %+v", featureName, userId, treatment))
+			log.Println(fmt.Sprintf("TreatmentName for feature %s using criteria %s is: %+v", featureName, userId, treatment))
 		}
 
 	}

@@ -1,11 +1,11 @@
-# Feature Lab (Go feature flags)
+# Feature Lab
 
 Feature Lab is a feature flag solution developed in Go.
 
-Feature flags are a powerful technique that allows you to turn features on and off, to serve different versions of features to different users, or gradually rollout a new feature.
+Feature flags are a powerful technique that allows you to turn features on and off, serve different versions of features to different users, or gradually rollout a new feature.
 
-This package communicates with a [Feature Lab server](https://github.com/torresjeff/go-feature-lab-server), where treatment allocation data is stored.
-Use the Feature Lab server to create new feature flags and perform a rollout of new features and experiments in a controlled and safe manner.
+This client package communicates with a [Feature Lab Server](https://github.com/torresjeff/go-feature-lab-server), where treatment allocation data is stored.
+Use the Feature Lab Server to create new feature flags and perform a rollout of new features and experiments in a controlled and safe manner.
 
 ## Treatment allocation
 When using Feature Lab, it is important to ensure that you're allocating users to different treatments in a fair and consistent manner.

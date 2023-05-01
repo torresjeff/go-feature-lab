@@ -27,7 +27,7 @@ func main() {
 	featureName := "ChangeBuyButtonColor"
 
 	for _, userId := range userIds {
-		treatment, err := featureLab.GetTreatment("FeatureLab", featureName, userId)
+		treatment, err := featureLab.GetTreatment("FeatureLabs", featureName, userId)
 		if err != nil {
 			log.Printf(err.Error())
 		} else {

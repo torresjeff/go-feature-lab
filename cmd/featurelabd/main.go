@@ -4,8 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"github.com/torresjeff/go-feature-lab/featurelab"
+	"google.golang.org/grpc"
 	"log"
-	"time"
 )
 
 func main() {
@@ -20,23 +20,37 @@ func main() {
 		"URL where Name Lab server is located. Eg: localhost:3000")
 	flag.Parse()
 
-	featureLab := featurelab.NewCacheableFeatureLab(featureLabHost, 10*time.Minute, 30*time.Minute)
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	featureLab, conn, err := featurelab.NewFeatureLabDaemonClient(43743, "FeatureLab")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer func(conn *grpc.ClientConn) {
+		err := conn.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(conn)
 
 	app := "FeatureLab"
 	// Initial fetch to cache features
-	_, err := featureLab.FetchFeatures(app)
+	features, flError := featureLab.FetchFeatures(app)
+	log.Println(fmt.Sprintf("got features features: %+v, error: %v", features, flError))
 	// TODO: error handling, retries
-	if err != nil {
-		log.Fatal(err)
+	if flError != nil {
+		log.Println("inside error")
+		log.Fatal(flError)
 	}
 
 	userIds := []string{"123456", "456789", "789123", "789456", "987654", "654321", "321987", "123789", "741852", "852963"}
 	featureName := "ChangeBuyButtonColor"
 
 	for _, userId := range userIds {
-		treatment, err := featureLab.GetTreatment(app, featureName, userId)
-		if err != nil {
-			log.Printf(err.Error())
+		treatment, flError := featureLab.GetTreatment(app, featureName, userId)
+		log.Println(fmt.Sprintf("treatment %+v", treatment))
+		if flError != nil {
+			log.Printf(flError.Error())
 		} else {
 			log.Println(fmt.Sprintf("Treatment for feature %s using criteria %s is: %+v", featureName, userId, treatment))
 		}

@@ -9,16 +9,12 @@ const (
 )
 
 type Error struct {
-	code    ErrorType
-	message string
-}
-
-func (e *Error) Code() ErrorType {
-	return e.code
+	Code    ErrorType `json:"code"`
+	Message string    `json:"message"`
 }
 
 func (e *Error) Error() string {
-	return e.message
+	return e.Message
 }
 
 func NewError(code ErrorType, message string) Error {

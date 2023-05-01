@@ -1,6 +1,6 @@
 package featurelab
 
-type ErrorType uint8
+type ErrorType uint32
 
 const (
 	ErrBadRequest          = 400

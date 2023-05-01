@@ -3,9 +3,9 @@ package featurelab
 type ErrorType uint32
 
 const (
-	ErrBadRequest          = 400
-	ErrNotFound            = 404
-	ErrInternalServerError = 500
+	ErrBadRequest          ErrorType = 400
+	ErrNotFound            ErrorType = 404
+	ErrInternalServerError ErrorType = 500
 )
 
 type Error struct {

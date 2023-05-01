@@ -12,7 +12,7 @@ type Client struct {
 }
 
 func (c *Client) GetTreatment(app string, feature string, criteria string) (TreatmentAssignment, *Error) {
-	log.Printf("Fetching treatment for app: %s, criteria: %s\n", getCacheKey(app, feature), criteria)
+	log.Printf("Fetching treatment for app: %s, feature: %s, criteria: %s\n", app, feature, criteria)
 
 	resp, err := c.restClient.R().SetPathParams(map[string]string{
 		"app":      app,
@@ -27,12 +27,12 @@ func (c *Client) GetTreatment(app string, feature string, criteria string) (Trea
 	}
 
 	if resp.IsError() {
-		var error *Error
-		err = json.Unmarshal(resp.Body(), error)
+		var flError Error
+		err = json.Unmarshal(resp.Body(), &flError)
 		if err != nil {
 			return TreatmentAssignment{}, NewError(ErrInternalServerError, err.Error())
 		}
-		return TreatmentAssignment{}, error
+		return TreatmentAssignment{}, &flError
 	}
 
 	var treatment TreatmentAssignment
@@ -45,7 +45,7 @@ func (c *Client) GetTreatment(app string, feature string, criteria string) (Trea
 }
 
 func (c *Client) FetchFeature(app string, featureName string) (Feature, *Error) {
-	log.Printf("Fetching feature %s\n", getCacheKey(app, featureName))
+	log.Printf("Fetching feature %s:%s\n", app, featureName)
 	resp, err := c.restClient.R().SetPathParams(map[string]string{
 		"app":     app,
 		"feature": featureName,
@@ -58,12 +58,13 @@ func (c *Client) FetchFeature(app string, featureName string) (Feature, *Error) 
 	}
 
 	if resp.IsError() {
-		var error *Error
-		err = json.Unmarshal(resp.Body(), error)
+		log.Println("Got error response:", resp.String())
+		var flError Error
+		err = json.Unmarshal(resp.Body(), &flError)
 		if err != nil {
 			return Feature{}, NewError(ErrInternalServerError, err.Error())
 		}
-		return Feature{}, error
+		return Feature{}, &flError
 	}
 
 	var feature Feature
@@ -88,12 +89,12 @@ func (c *Client) FetchFeatures(app string) ([]Feature, *Error) {
 	}
 
 	if resp.IsError() {
-		var error *Error
-		err = json.Unmarshal(resp.Body(), error)
+		var flError Error
+		err = json.Unmarshal(resp.Body(), &flError)
 		if err != nil {
 			return nil, NewError(ErrInternalServerError, err.Error())
 		}
-		return nil, error
+		return nil, &flError
 	}
 
 	var features []Feature

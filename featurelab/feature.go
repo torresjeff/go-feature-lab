@@ -29,9 +29,9 @@ type FeatureAllocation struct {
 	Weight    uint32 `json:"weight"`
 }
 
-func NewFeatureAllocation(feature string, weight uint32) FeatureAllocation {
+func NewFeatureAllocation(treatment string, weight uint32) FeatureAllocation {
 	return FeatureAllocation{
-		Treatment: feature,
+		Treatment: treatment,
 		Weight:    weight,
 	}
 }

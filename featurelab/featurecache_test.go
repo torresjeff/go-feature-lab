@@ -25,15 +25,15 @@ func TestNewDefaultFeatureCache(t *testing.T) {
 	feature := NewFeature(app, showRecommendations, allocations)
 	got.PutFeature(app, showRecommendations, feature)
 
-	if f, err := got.GetFeature(app, showRecommendations); err != nil {
-		t.Errorf("got error %s, want feature %+v", err, feature)
+	if f, found := got.GetFeature(app, showRecommendations); !found {
+		t.Errorf("got not found, want found")
 	} else if !reflect.DeepEqual(f, feature) {
 		t.Errorf("got %+v, want %+v", f, feature)
 	}
 
 	nonExistingFeatureName := "NonExistingFeature"
-	if f, err := got.GetFeature(app, nonExistingFeatureName); err == nil {
-		t.Errorf("got %+v, want error", f)
+	if f, found := got.GetFeature(app, nonExistingFeatureName); found {
+		t.Errorf("found feature %+v, want not found", f)
 	}
 
 }

@@ -8,7 +8,7 @@ import (
 )
 
 type FeatureCache interface {
-	GetFeature(app, name string) (Feature, error)
+	GetFeature(app, name string) (Feature, bool)
 	PutFeature(app, name string, feature Feature)
 	PutFeatures(features []Feature)
 }
@@ -17,18 +17,19 @@ type defaultFeatureCache struct {
 	cache *cache.Cache
 }
 
-func (d *defaultFeatureCache) GetFeature(app, name string) (Feature, error) {
-	if feature, found := d.cache.Get(getCacheKey(app, name)); found {
-		f, ok := feature.(Feature)
-		if !ok {
-			panic(fmt.Sprintf("expected to find a Name in cache, but instead found %+v", f))
-		}
-
-		log.Printf("Found Name %s in cache\n", getCacheKey(app, name))
-		return f, nil
+func (d *defaultFeatureCache) GetFeature(app, name string) (Feature, bool) {
+	feature, found := d.cache.Get(getCacheKey(app, name))
+	if !found {
+		return Feature{}, false
 	}
 
-	return Feature{}, fmt.Errorf("feature %s doesn't exist in cache", name)
+	f, ok := feature.(Feature)
+	if !ok {
+		panic(fmt.Sprintf("expected to find a Feature in cache, but instead found %+v", f))
+	}
+
+	log.Printf("Found Name %s in cache\n", getCacheKey(app, name))
+	return f, true
 }
 
 func (d *defaultFeatureCache) PutFeature(app, name string, feature Feature) {

@@ -1,76 +1,114 @@
 package featurelab
 
 import (
-	"fmt"
+	"encoding/json"
+	"github.com/go-resty/resty/v2"
+	"log"
 )
 
 type Client struct {
 	featureLabHost string
+	restClient     *resty.Client
 }
 
-func (c *Client) GetTreatment(app string, featureName string, criteria string) (TreatmentAssignment, error) {
-	// TODO: make call to FeatureLab server
+func (c *Client) GetTreatment(app string, feature string, criteria string) (TreatmentAssignment, *Error) {
+	log.Printf("Fetching treatment for app: %s, criteria: %s\n", getCacheKey(app, feature), criteria)
 
-	feature, err := c.FetchFeature(app, featureName)
+	resp, err := c.restClient.R().SetPathParams(map[string]string{
+		"app":      app,
+		"feature":  feature,
+		"criteria": criteria,
+	}).
+		Get("/app/{app}/features/{feature}/treatment/{criteria}")
+
 	if err != nil {
-		return TreatmentAssignment{}, err
+		// TODO: what errors can resty return here?
+		return TreatmentAssignment{}, NewError(ErrInternalServerError, err.Error())
 	}
 
-	assigner := NewTreatmentAssigner()
-	return assigner.GetTreatmentAssignment(feature, criteria)
+	if resp.IsError() {
+		var error *Error
+		err = json.Unmarshal(resp.Body(), error)
+		if err != nil {
+			return TreatmentAssignment{}, NewError(ErrInternalServerError, err.Error())
+		}
+		return TreatmentAssignment{}, error
+	}
+
+	var treatment TreatmentAssignment
+	err = json.Unmarshal(resp.Body(), &treatment)
+	if err != nil {
+		return TreatmentAssignment{}, NewError(ErrInternalServerError, err.Error())
+	}
+
+	return treatment, nil
 }
 
-func (c *Client) FetchFeature(app string, featureName string) (Feature, error) {
-	// TODO: make call to FeatureLab server
+func (c *Client) FetchFeature(app string, featureName string) (Feature, *Error) {
+	log.Printf("Fetching feature %s\n", getCacheKey(app, featureName))
+	resp, err := c.restClient.R().SetPathParams(map[string]string{
+		"app":     app,
+		"feature": featureName,
+	}).
+		Get("/app/{app}/features/{feature}")
 
-	if app == "FeatureLab" && featureName == "ShowRecommendations" {
-		return Feature{
-			App:  "FeatureLab",
-			Name: "ShowRecommendations",
-			Allocations: []FeatureAllocation{
-				NewFeatureAllocation("C", 10),
-				NewFeatureAllocation("T1", 10),
-				NewFeatureAllocation("T2", 10),
-			}}, nil
-	} else if app == "FeatureLab" && featureName == "ChangeBuyButtonColor" {
-		return Feature{
-			App:  "FeatureLab",
-			Name: "ChangeBuyButtonColor",
-			Allocations: []FeatureAllocation{
-				NewFeatureAllocation("C", 32),
-				NewFeatureAllocation("T1", 68),
-			}}, nil
+	if err != nil {
+		// TODO: what errors can resty return here?
+		return Feature{}, NewError(ErrInternalServerError, err.Error())
 	}
-	return Feature{}, fmt.Errorf("Name %s or app %s doesn't exist", featureName, app)
+
+	if resp.IsError() {
+		var error *Error
+		err = json.Unmarshal(resp.Body(), error)
+		if err != nil {
+			return Feature{}, NewError(ErrInternalServerError, err.Error())
+		}
+		return Feature{}, error
+	}
+
+	var feature Feature
+	err = json.Unmarshal(resp.Body(), &feature)
+	if err != nil {
+		return Feature{}, NewError(ErrInternalServerError, err.Error())
+	}
+
+	return feature, nil
 }
 
-func (c *Client) FetchFeatures(app string) ([]Feature, error) {
-	// TODO: make call to FeatureLab server
-	if app != "FeatureLab" {
-		return nil, fmt.Errorf("app %s doesn't exist", app)
+func (c *Client) FetchFeatures(app string) ([]Feature, *Error) {
+	log.Printf("Fetching features for app %s\n", app)
+	resp, err := c.restClient.R().SetPathParams(map[string]string{
+		"app": app,
+	}).
+		Get("/app/{app}/features")
+
+	if err != nil {
+		// TODO: what errors can resty return here?
+		return nil, NewError(ErrInternalServerError, err.Error())
 	}
 
-	return []Feature{
-		Feature{
-			App:  "FeatureLab",
-			Name: "ShowRecommendations",
-			Allocations: []FeatureAllocation{
-				NewFeatureAllocation("C", 10),
-				NewFeatureAllocation("T1", 10),
-				NewFeatureAllocation("T2", 10),
-			}},
-		Feature{
-			App:  "FeatureLab",
-			Name: "ChangeBuyButtonColor",
-			Allocations: []FeatureAllocation{
-				NewFeatureAllocation("C", 32),
-				NewFeatureAllocation("T1", 68),
-			}},
-	}, nil
+	if resp.IsError() {
+		var error *Error
+		err = json.Unmarshal(resp.Body(), error)
+		if err != nil {
+			return nil, NewError(ErrInternalServerError, err.Error())
+		}
+		return nil, error
+	}
+
+	var features []Feature
+	err = json.Unmarshal(resp.Body(), &features)
+	if err != nil {
+		return nil, NewError(ErrInternalServerError, err.Error())
+	}
+
+	return features, nil
 }
 
 func NewClient(featureLabHost string) *Client {
+	// TODO: featureLabHost URL validation
 	return &Client{
 		featureLabHost: featureLabHost,
+		restClient:     resty.New().SetBaseURL(featureLabHost + "/api/v1"),
 	}
 }

@@ -7,6 +7,8 @@ import (
 )
 
 func main() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
 	featureLab := featurelab.NewFeatureLabClient("http://localhost:3000")
 
 	feature, flError := featureLab.FetchFeature("FeatureLab", "ShowRecommendations")

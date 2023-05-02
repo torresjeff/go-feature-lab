@@ -6,6 +6,7 @@ import (
 	"github.com/torresjeff/featurelabd/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"log"
 )
 
 type FeatureLabDaemonClient struct {
@@ -20,9 +21,20 @@ func NewFeatureLabDaemonClient(port uint, apps ...string) (FeatureLab, *grpc.Cli
 		return &FeatureLabDaemonClient{}, nil, err
 	}
 
-	return &FeatureLabDaemonClient{
+	flc := &FeatureLabDaemonClient{
 		featureLabClient: pb.NewFeatureLabClient(conn),
-	}, conn, nil
+	}
+
+	// Initial fetch of features to cache them
+	log.Printf("Caching features for apps: %v\n", apps)
+	for _, app := range apps {
+		_, err := flc.FetchFeatures(app)
+		if err != nil {
+			log.Printf("error fetching features for app %s: %s", app, err)
+		}
+	}
+
+	return flc, conn, nil
 }
 
 // GetTreatment fetches the treatment that is assigned for a criteria in a particular Feature.

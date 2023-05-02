@@ -9,6 +9,8 @@ import (
 )
 
 func main() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
 	var featureLabHost string
 	flag.StringVar(&featureLabHost,
 		"featurelab-host",
@@ -20,7 +22,6 @@ func main() {
 		"URL where Name Lab server is located. Eg: localhost:3000")
 	flag.Parse()
 
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	featureLab, conn, err := featurelab.NewFeatureLabDaemonClient(43743, "FeatureLab")
 	if err != nil {
 		log.Fatal(err)
@@ -34,14 +35,6 @@ func main() {
 	}(conn)
 
 	app := "FeatureLab"
-	// Initial fetch to cache features
-	features, flError := featureLab.FetchFeatures(app)
-	log.Println(fmt.Sprintf("got features features: %+v, error: %v", features, flError))
-	// TODO: error handling, retries
-	if flError != nil {
-		log.Println("inside error")
-		log.Fatal(flError)
-	}
 
 	userIds := []string{"123456", "456789", "789123", "789456", "987654", "654321", "321987", "123789", "741852", "852963"}
 	featureName := "ChangeBuyButtonColor"

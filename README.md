@@ -7,6 +7,11 @@ Feature flags are a powerful technique that allows you to turn features on and o
 This client package communicates with a [Feature Lab Server](https://github.com/torresjeff/go-feature-lab-server), where treatment allocation data is stored.
 Use the Feature Lab Server to create new feature flags and perform a rollout of new features and experiments in a controlled and safe manner.
 
+## Usage
+For basic usage, see `cmd/gettreatment/main.go`
+
+For an example that uses the daemon (featurelabd), see `cmd/featurelabd/main.go`
+
 ## How Feature Lab works
 The basic building block of Feature Lab are features. A feature belongs to an application (scope of the feature), it's identified by a feature name and has 0 (feature is turned off) or more allocations.
 An allocation represents the weight that is given to a specific treatment (eg. "Control", "Treatment 1", etc.).
@@ -54,9 +59,6 @@ You should strive for your allocation criteria to be deterministic: instead of u
 (which changes everytime the user logs out), you should use the user ID instead (doesn't change between sessions).
 Using a value that changes over time as your allocation criteria could have the effect of a user being assigned to different treatments between sessions (or in the same session if the value can change multiple times during the session),
 resulting in an inconsistent experience.
-
-## Examples
-See `cmd/gettreatment/main.go`
 
 ## TODO list
 - [ ] Feature Lab daemon that syncs allocation data every 10 minutes

@@ -14,8 +14,6 @@ type FeatureLabDaemonClient struct {
 }
 
 func NewFeatureLabDaemonClient(port uint, apps ...string) (FeatureLab, *grpc.ClientConn, error) {
-	// TODO: use apps for initial fetch of features
-
 	conn, err := grpc.Dial(fmt.Sprintf("localhost:%d", port), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return &FeatureLabDaemonClient{}, nil, err
